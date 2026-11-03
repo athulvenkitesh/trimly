@@ -1,0 +1,30 @@
+# Keep secrets and demo artifacts out of the image.
+# Without this, `COPY . .` bakes .env — real JWT and payment secrets — into a
+# layer that anyone with the image can read.
+.env
+.env.*
+!.env.example
+
+.git
+.gitignore
+.venv
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local data: the container gets its data from Postgres and the bucket.
+*.db
+*.sqlite3
+uploads/
+test_booking.db
+
+# Docs, screenshots and reports are not needed at runtime.
+docs/
+work/
+outputs/
+*.pdf
+*.png
+*.log

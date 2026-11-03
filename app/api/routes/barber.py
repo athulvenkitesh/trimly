@@ -1,14 +1,12 @@
-import hashlib
 from datetime import datetime, timezone
-from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.api.dependencies import require_shop_owner
 from app.api.routes.shops import owned_shop
-from app.core.config import settings
 from app.core.database import get_db
+from app.integrations.storage.provider import get_logo_storage
 from app.models import Booking, BusinessHours, Service, Shop, SlotSettings, User
 from app.schemas.booking import NextSlotOut, OwnerBookingOut, WalkInCreate
 from app.services.booking_service import BookingService
@@ -112,9 +110,8 @@ def set_convenience_fee(shop_id: int, payload: ConvenienceFeeUpdate, user: User 
     db.commit(); db.refresh(shop)
     return ConvenienceFeeOut(shop_id=shop.id, convenience_fee_paise=shop.convenience_fee_paise)
 
-# Logos are stored on disk and served by the /uploads static mount.
-# __file__ for this module is app/api/routes/barber.py (3 levels under project root).
-UPLOADS_DIR = Path(__file__).resolve().parents[3] / "uploads" / "shops"
+# Logo bytes go through the storage boundary: local disk in development, an
+# S3-compatible bucket (R2) in production, where the disk does not survive a deploy.
 LOGO_CONTENT_TYPES = {"image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp"}
 LOGO_MAX_BYTES = 2 * 1024 * 1024  # 2 MB
 
@@ -130,11 +127,8 @@ def upload_logo(shop_id: int, file: UploadFile = File(...), user: User = Depends
         raise HTTPException(413, "Logo must be 2 MB or smaller")
     if not data:
         raise HTTPException(422, "Empty file")
-    UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
-    # Content hash in the name: re-uploads replace the file and the browser re-fetches.
-    name = hashlib.sha256(data).hexdigest()[:16] + suffix
-    (UPLOADS_DIR / name).write_bytes(data)
-    shop.logo_url = f"/uploads/shops/{name}"
+    # Content hash in the name: re-uploads replace the object and the browser re-fetches.
+    shop.logo_url = get_logo_storage().save(data, suffix, file.content_type or "image/jpeg")
     db.commit()
     return {"logo_url": shop.logo_url}
 

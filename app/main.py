@@ -1,5 +1,6 @@
 from pathlib import Path
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from app.api.routes import admin, auth, availability, barber, bookings, chat, customer, discovery, payments, reviews, services, shops, whatsapp
 from app.core.config import settings
@@ -42,6 +43,18 @@ class RevalidatingStaticFiles(StaticFiles):
 uploads_dir = Path(__file__).parent.parent / "uploads"
 uploads_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
+
+# A mount only serves index.html on a trailing slash, so the bare portal URLs
+# would 404 on a link someone pasted into chat. Redirect before the mounts.
+@app.get("/dashboard", include_in_schema=False)
+def dashboard_root():
+    return RedirectResponse(url="/dashboard/", status_code=307)
+
+
+@app.get("/admin", include_in_schema=False)
+def admin_root():
+    return RedirectResponse(url="/admin/", status_code=307)
+
 
 # The owner portal is intentionally a separate presentation layer; it uses the
 # same versioned API as any future mobile or WhatsApp client.

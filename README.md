@@ -12,6 +12,16 @@ docker compose exec api alembic upgrade head
 
 The API is served at `http://localhost:8000`, Swagger at `/docs`, and ReDoc at `/redoc`.
 
+## Deploy
+
+[`DEPLOY.md`](DEPLOY.md) covers production: a Render Blueprint
+([`render.yaml`](render.yaml)) that builds the [Dockerfile](Dockerfile), runs
+`alembic upgrade head` before each release, and connects a managed Postgres.
+Shop logos go to Cloudflare R2 (`STORAGE_BACKEND=s3`) because a container host
+replaces its filesystem on every deploy. Set `PORT`/`DATABASE_URL` from the
+environment — `postgresql://` URLs are rewritten to the psycopg 3 driver
+automatically.
+
 ## Design highlights
 
 - `BookingService` owns synchronous reservation transactions; background work is deliberately kept out of the commit path.
