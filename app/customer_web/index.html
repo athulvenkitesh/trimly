@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trimly — Book a barber near you</title>
+  <link rel="stylesheet" href="/styles.css?v=7">
+  <script>document.documentElement.dataset.theme = (function () { try { return localStorage.getItem("trimly_theme") || "dark"; } catch (error) { return "dark"; } })();</script>
+</head>
+<body>
+  <button id="theme-switch" class="theme-switch" type="button" role="switch" aria-checked="true" aria-label="Switch to light mode" title="Switch to light mode"><span class="switch-track"><span class="switch-knob"></span><span class="switch-icon" aria-hidden="true">☾</span></span></button>
+  <!-- Auth -->
+  <main id="auth-screen" class="auth-screen">
+    <div class="auth-card">
+      <a class="brand"><span class="brand-mark">T</span> Trimly</a>
+      <div id="register-copy">
+        <p class="eyebrow">GET STARTED</p>
+        <p id="register-role-headline" class="muted"></p>
+      </div>
+      <div id="login-copy" hidden>
+        <p class="eyebrow">WELCOME BACK</p>
+        <h1>Sign in</h1>
+        <p class="muted">Your bookings are waiting.</p>
+      </div>
+      <form id="register-form" class="form-stack">
+        <label>Email<input required name="email" type="email" autocomplete="email" placeholder="you@example.com"></label>
+        <label>Password<input required name="password" type="password" minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></label>
+        <input type="hidden" name="role" value="CUSTOMER">
+        <button id="register-submit" class="button primary" type="submit"><span id="register-submit-label" class="button-label">Create account</span> <span>→</span></button>
+        <p id="vendor-copy" class="vendor-copy">Want to list your shop? <button id="vendor-create" class="text-button" type="button">Create a vendor account</button></p>
+      </form>
+      <form id="login-form" class="form-stack" hidden>
+        <label>Email<input required name="email" type="email" autocomplete="email" placeholder="you@example.com"></label>
+        <label>Password<input required name="password" type="password" autocomplete="current-password" placeholder="Your password"></label>
+        <button class="button primary" type="submit">Sign in <span>→</span></button>
+      </form>
+      <p id="auth-message" class="form-message" aria-live="polite"></p>
+      <p class="switch-copy"><span id="switch-register">Already have an account? <button data-show="login" class="text-button" type="button">Sign in</button></span><span id="switch-login" hidden>First time here? <button data-show="register" class="text-button" type="button">Create an account</button></span></p>
+    </div>
+  </main>
+
+  <!-- App -->
+  <main id="app-screen" hidden>
+    <header class="topbar">
+      <a class="brand"><span class="brand-mark">T</span> Trimly</a>
+      <div class="topbar-actions">
+        <span id="user-email" class="user-email"></span>
+        <button id="nav-bookings" class="ghost-button" type="button">My bookings</button>
+        <button id="sign-out" class="ghost-button" type="button">Sign out</button>
+      </div>
+    </header>
+
+    <section id="discover-view" class="page">
+      <div class="hero">
+        <p class="eyebrow">FIND A BARBER</p>
+        <h1>Book appointments near you</h1>
+        <form id="search-form" class="search-bar">
+          <input id="search-input" type="text" placeholder="Search by shop name or service — e.g. “fade” or “Cut Here”" autocomplete="off">
+          <button class="button primary" type="submit">Search</button>
+          <button id="nearby-button" class="ghost-button" type="button">📍 Near me</button>
+          <button id="map-toggle" class="ghost-button" type="button">🗺 Map view</button>
+        </form>
+        <div id="results-meta" class="muted results-meta"></div>
+      </div>
+      <div id="map-panel" class="map-panel" hidden>
+        <div id="shops-map"></div>
+        <p class="muted map-hint">Pins show your current results — tap one to open the shop. Shops without a set location are only in the list below.</p>
+      </div>
+      <div id="results" class="results-grid"></div>
+      <p id="results-empty" class="empty" hidden>No shops matched. Try another search.</p>
+    </section>
+
+    <section id="shop-view" class="page" hidden>
+      <button id="back-to-results" class="text-button" type="button">← Back to results</button>
+      <div class="shop-head">
+        <div>
+          <p class="eyebrow" id="shop-postal"></p>
+          <h1 id="shop-name">—</h1>
+          <p id="shop-address" class="muted"></p>
+          <p id="shop-distance" class="muted"></p>
+        </div>
+        <div class="fee-note" id="shop-fee"></div>
+      </div>
+      <div class="rating-chip" id="shop-rating" hidden></div>
+      <h2>Services</h2>
+      <div id="shop-services" class="services-grid"></div>
+      <h2>Reviews</h2>
+      <div id="reviews-summary" class="reviews-summary"></div>
+      <form id="review-form" class="review-form">
+        <p class="eyebrow">LEAVE A REVIEW</p>
+        <div class="star-picker" id="star-picker" role="radiogroup" aria-label="Rating">
+          <button type="button" data-star="1" aria-label="1 star">★</button>
+          <button type="button" data-star="2" aria-label="2 stars">★</button>
+          <button type="button" data-star="3" aria-label="3 stars">★</button>
+          <button type="button" data-star="4" aria-label="4 stars">★</button>
+          <button type="button" data-star="5" aria-label="5 stars">★</button>
+        </div>
+        <textarea id="review-comment" rows="3" maxlength="2000" placeholder="How was your visit? (optional)"></textarea>
+        <div class="review-actions">
+          <button class="button primary" type="submit">Post review <span>→</span></button>
+          <p id="review-message" class="form-message" aria-live="polite"></p>
+        </div>
+      </form>
+      <div id="reviews-list" class="reviews-list"></div>
+      <p id="reviews-empty" class="empty" hidden>No reviews yet — be the first to rate this shop.</p>
+      <!-- Booking dialog -->
+      <dialog id="booking-dialog" class="booking-dialog">
+        <form method="dialog" id="booking-form">
+          <div class="dialog-head">
+            <div><p class="eyebrow">BOOK APPOINTMENT</p><h2 id="bd-shop-name">—</h2><p id="bd-service" class="muted"></p></div>
+            <button value="cancel" class="close-dialog" aria-label="Close">×</button>
+          </div>
+          <div class="bd-days" id="bd-days"></div>
+          <div id="bd-slots" class="bd-slots"></div>
+          <div id="bd-method" class="bd-method" hidden>
+            <p class="muted">Payment method</p>
+            <div class="bd-methods">
+              <button type="button" data-method="upi" class="method-option active">🟣 UPI <small>GPay · PhonePe · any UPI app</small></button>
+              <button type="button" data-method="card" class="method-option">💳 Card <small>Visa · Mastercard · RuPay</small></button>
+            </div>
+          </div>
+          <div id="bd-summary" class="bd-summary" hidden>
+            <div class="bd-lines">
+              <span id="bd-price"></span>
+              <span id="bd-fee"></span>
+              <span id="bd-method-line"></span>
+              <b id="bd-total"></b>
+            </div>
+            <button class="button primary" type="button" id="bd-confirm">Confirm & pay <span>→</span></button>
+            <p id="bd-message" class="form-message" aria-live="polite"></p>
+          </div>
+          <p id="bd-no-slots" class="empty" hidden>No free slots for this service on the dates shown.</p>
+        </form>
+      </dialog>
+    </section>
+
+    <section id="bookings-view" class="page" hidden>
+      <div class="section-head"><h1>My bookings</h1><p class="muted">Every appointment you've made, newest first.</p></div>
+      <div id="my-bookings" class="booking-list"></div>
+      <p id="bookings-empty" class="empty" hidden>No bookings yet. Find a shop and book your first appointment!</p>
+    </section>
+
+    <!-- Assistant: answers from the same shop/service/slot data the site renders -->
+    <button id="chat-launcher" class="chat-launcher" type="button" aria-expanded="false" aria-controls="chat-panel">
+      <span class="chat-launcher-icon" aria-hidden="true">✂</span><span class="chat-launcher-label">Ask Trimly</span>
+    </button>
+    <aside id="chat-panel" class="chat-panel" hidden aria-label="Trimly assistant">
+      <header class="chat-head">
+        <div class="chat-head-copy"><b>Trimly assistant</b><span>Shops · prices · slots</span></div>
+        <button id="chat-close" class="chat-close" type="button" aria-label="Close assistant">×</button>
+      </header>
+      <div id="chat-log" class="chat-log" role="log" aria-live="polite"></div>
+      <div id="chat-chips" class="chat-chips"></div>
+      <form id="chat-form" class="chat-form">
+        <input id="chat-input" type="text" maxlength="600" autocomplete="off" placeholder="Ask for shops, prices or a slot…" aria-label="Message the assistant">
+        <button class="chat-send" type="submit" aria-label="Send message">→</button>
+      </form>
+    </aside>
+  </main>
+
+  <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <script src="/app.js?v=16"></script>
+</body>
+</html>

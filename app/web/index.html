@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trimly — Owner Portal</title>
+  <link rel="stylesheet" href="/dashboard/styles.css?v=21">
+  <script>document.documentElement.dataset.theme = (function () { try { return localStorage.getItem("trimly_theme") || "dark"; } catch (error) { return "dark"; } })();</script>
+</head>
+<body>
+  <main id="auth-screen" class="auth-layout">
+    <section class="brand-panel">
+      <a class="brand" href="#"><span class="brand-mark">T</span> Trimly</a>
+      <div class="brand-copy">
+        <p class="eyebrow">THE OWNER PORTAL</p>
+        <h1>Your craft,<br>beautifully booked.</h1>
+        <p>Bring your barbershop online in a few minutes. Add your shop, publish services, and get ready for appointments.</p>
+      </div>
+      <div class="proof"><div class="avatars"><i>J</i><i>M</i><i>A</i></div><span>Built for independent barbers</span></div>
+      <div class="mesh mesh-one"></div><div class="mesh mesh-two"></div>
+    </section>
+    <section class="auth-panel">
+      <button class="ghost-button theme-toggle auth-theme-toggle" type="button"><span class="theme-icon">☾</span></button>
+      <div class="auth-card">
+        <div id="register-copy">
+          <p class="eyebrow">WELCOME TO TRIMLY</p>
+          <h2>Set up your shop</h2>
+          <p class="muted">Start managing your barber business today.</p>
+        </div>
+        <div id="login-copy" hidden>
+          <p class="eyebrow">WELCOME BACK</p>
+          <h2>Sign in to Trimly</h2>
+          <p class="muted">Manage your shop and service menu.</p>
+        </div>
+        <form id="register-form" class="form-stack">
+          <label>Email address<input required name="email" type="email" autocomplete="email" placeholder="you@barbershop.com"></label>
+          <label>Password<input required name="password" type="password" minlength="8" autocomplete="new-password" placeholder="At least 8 characters"></label>
+          <label>Confirm password<input required name="confirmPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Repeat your password"></label>
+          <button class="button primary" type="submit">Create owner account <span>→</span></button>
+        </form>
+        <form id="login-form" class="form-stack" hidden>
+          <label>Email address<input required name="email" type="email" autocomplete="email" placeholder="you@barbershop.com"></label>
+          <label>Password<input required name="password" type="password" autocomplete="current-password" placeholder="Your password"></label>
+          <button class="button primary" type="submit">Sign in <span>→</span></button>
+        </form>
+        <p id="auth-message" class="form-message" aria-live="polite"></p>
+        <p class="switch-copy"><span id="switch-register">Already have an account? <button data-show="login" class="text-button" type="button">Sign in</button></span><span id="switch-login" hidden>New to Trimly? <button data-show="register" class="text-button" type="button">Create an account</button></span></p>
+      </div>
+    </section>
+  </main>
+
+  <main id="dashboard-screen" hidden>
+    <header class="topbar">
+      <a class="brand dark" href="#"><span class="brand-mark">T</span> Trimly</a>
+      <div class="topbar-actions"><button id="theme-toggle" class="ghost-button theme-toggle" type="button"><span class="theme-icon">☾</span></button><span id="owner-email" class="owner-email"></span><button id="open-password" class="ghost-button">Change password</button><button id="sign-out" class="ghost-button">Sign out</button></div>
+    </header>
+    <div class="dashboard-shell">
+      <aside class="sidebar"><p class="sidebar-label">WORKSPACE</p><button class="nav-link active" data-view="overview">Overview</button><button class="nav-link" data-view="appointments">Manage appointments</button><button class="nav-link" data-view="assistant">Ask Trimly</button><button class="nav-link" data-view="services">Services</button><button class="nav-link" data-view="settings">Shop settings</button><div class="sidebar-help"><b>Need a hand?</b><span>Our setup guide has the essentials.</span><a href="/docs" target="_blank">View API docs →</a></div></aside>
+      <section class="content">
+        <div class="content-heading"><div><p class="eyebrow">OWNER DASHBOARD</p><h1 id="dashboard-title">Welcome to Trimly</h1><p id="dashboard-subtitle" class="muted">Create your first shop to begin building your online presence.</p></div><div class="status-pill"><span></span> Account active</div></div>
+        <div id="empty-state" class="onboarding-card">
+          <div class="step-number">01</div><div><p class="eyebrow">FIRST THINGS FIRST</p><h2>Create your barbershop</h2><p class="muted">This is what customers will see when they book with you.</p></div>
+          <form id="shop-form" class="shop-form">
+            <label>Shop name<input required name="name" maxlength="160" placeholder="e.g. The Corner Chair"></label>
+            <label>Address <small>(optional)</small><input name="address" maxlength="500" placeholder="e.g. 12 Market Street, Bengaluru"></label>
+            <button class="button primary" type="submit">Create my shop <span>→</span></button>
+          </form>
+          <p id="shop-message" class="form-message" aria-live="polite"></p>
+        </div>
+        <div id="shop-workspace" hidden>
+          <section id="overview-view">
+            <div class="stats-grid">
+              <article class="stat-card">
+                <p class="eyebrow">TODAY'S COLLECTION</p>
+                <strong class="stat-value" id="today-collection">₹0</strong>
+                <span class="stat-meta" id="today-meta">No appointments today</span>
+              </article>
+              <article class="stat-card">
+                <p class="eyebrow">SHOP STATUS</p>
+                <button id="shop-status-toggle" class="status-switch" type="button" role="switch" aria-checked="true" aria-label="Shop is open for bookings">
+                  <span class="status-track"><span class="status-knob"></span></span>
+                  <span id="shop-status-label">Open</span>
+                </button>
+                <span class="stat-meta" id="shop-status-meta">Customers can book you today</span>
+              </article>
+              <article class="stat-card">
+                <p class="eyebrow">NEXT AVAILABLE SLOT</p>
+                <div class="slot-value-row">
+                  <strong class="stat-value" id="next-slot">—</strong>
+                  <button id="slot-edit" class="slot-edit" type="button" aria-label="Edit the next slot time" title="Pick an exact time" disabled>✎</button>
+                </div>
+                <span class="stat-meta" id="next-slot-meta">Checking your calendar…</span>
+                <button id="next-slot-action" class="slot-action" type="button" hidden>
+                  <span id="next-slot-action-label">Set opening hours →</span>
+                </button>
+                <div id="slot-editor" class="slot-editor" hidden>
+                  <input id="slot-time-input" type="time" step="300" aria-label="Exact start time">
+                  <button id="slot-time-apply" class="slot-set" type="button">Set time</button>
+                  <button id="slot-time-cancel" class="slot-cancel" type="button">Cancel</button>
+                </div>
+                <div id="slot-buffer" class="slot-buffer" role="group" aria-label="Push the next slot later">
+                  <button type="button" class="buffer-chip active" data-buffer="0" aria-pressed="true">Now</button>
+                  <button type="button" class="buffer-chip" data-buffer="5" aria-pressed="false">+5 min</button>
+                  <button type="button" class="buffer-chip" data-buffer="10" aria-pressed="false">+10 min</button>
+                  <button type="button" class="buffer-chip" data-buffer="15" aria-pressed="false">+15 min</button>
+                  <button type="button" class="buffer-chip" data-buffer="20" aria-pressed="false">+20 min</button>
+                </div>
+                <button id="walk-in-button" class="walk-in-button" type="button">Seat walk-in <span>→</span></button>
+                <span class="stat-meta" id="walk-in-hint">No booking? Take this slot for a walk-in customer.</span>
+              </article>
+            </div>
+            <div class="section-heading">
+              <div><p class="eyebrow">UPCOMING BOOKINGS</p><h2>Coming up at your shop</h2></div>
+              <span id="upcoming-count" class="service-count">0 upcoming</span>
+            </div>
+            <div id="upcoming-list" class="bookings-list"></div>
+            <div id="upcoming-empty" class="no-services">No upcoming appointments yet — once customers book, they show up here.</div>
+          </section>
+
+          <section id="settings-section" hidden>
+          <div class="shop-banner"><div class="shop-avatar" id="shop-initial">T</div><div><p class="eyebrow">YOUR SHOP</p><h2 id="shop-name">—</h2><p id="shop-address" class="muted">—</p></div><span class="live-pill">● Live</span></div>
+          <div id="location-section">
+            <div class="section-heading"><div><p class="eyebrow">SHOP LOCATION</p><h2>Where are you located?</h2><p class="muted">Drop a pin so customers can find you on the map.</p></div><span id="location-status" class="service-count">Not set</span></div>
+            <div class="location-layout">
+              <form id="location-form" class="service-form">
+                <label>Search address<span id="location-search-host" class="search-host"><input id="location-search" type="text" placeholder="Start typing an address or place…" autocomplete="off"></span></label>
+                <div class="location-hint muted" id="location-hint">Search for your shop, then drag the pin to fine-tune the exact entrance.</div>
+                <input id="location-place-id" type="hidden">
+                <div class="two-columns"><label>Latitude<input id="location-lat" name="latitude" type="number" step="any" min="-90" max="90" placeholder="12.9716"></label><label>Longitude<input id="location-lng" name="longitude" type="number" step="any" min="-180" max="180" placeholder="77.5946"></label></div>
+                <label>Pincode <small>(jump to area on the map)</small><input id="location-postal" name="postal_code" maxlength="20" pattern="[A-Za-z0-9 \\-]{2,20}" placeholder="e.g. 560001 or 110001"></label>
+                <label>Address shown to customers<input id="location-address" name="address" maxlength="500" placeholder="e.g. 12 Market Street, Bengaluru"></label>
+                <div class="location-actions"><button class="button primary" type="submit">Save location <span>→</span></button><button class="ghost-button" type="button" id="clear-location">Clear pin</button></div>
+                <p id="location-message" class="form-message" aria-live="polite"></p>
+              </form>
+              <div class="map-frame">
+                <div id="map-canvas" class="map-canvas"></div>
+                <div id="map-placeholder" class="map-placeholder muted" hidden>Map could not be loaded. You can still enter latitude and longitude manually.</div>
+              </div>
+            </div>
+          </div>
+          <div id="hours-section">
+            <div class="section-heading"><div><p class="eyebrow">BUSINESS HOURS</p><h2>When are you open?</h2><p class="muted">Customers can book only inside these windows. Times without a window feel like "no slots" — set them here.</p></div><span id="hours-status" class="service-count">Not set</span></div>
+            <form id="hours-form" class="service-form">
+              <div class="hours-grid" id="hours-grid"></div>
+              <div class="location-actions"><button class="button primary" type="submit">Save hours <span>→</span></button><button class="ghost-button" type="button" id="hours-defaults">Fill Mon–Sat 9am–6pm</button></div>
+              <p id="hours-message" class="form-message" aria-live="polite"></p>
+            </form>
+          </div>
+          </section>
+          <div id="assistant-section" hidden>
+            <div class="section-heading"><div><p class="eyebrow">ASK TRIMLY</p><h2>Your shop's numbers, in plain English</h2><p class="muted">Answers are computed from your own bookings, payments and reviews. All times UTC.</p></div><span id="assistant-status" class="service-count">Ready</span></div>
+            <div class="assistant-shell">
+              <div id="oc-log" class="chat-log" role="log" aria-live="polite"></div>
+              <div id="oc-chips" class="chat-chips"></div>
+              <form id="oc-form" class="chat-form">
+                <input id="oc-input" type="text" maxlength="600" autocomplete="off" placeholder="e.g. how many bookings today?" aria-label="Ask about your shop">
+                <button class="chat-send" type="submit" aria-label="Send question">→</button>
+              </form>
+            </div>
+          </div>
+          <div id="appointments-section" hidden>
+            <div class="section-heading"><div><p class="eyebrow">APPOINTMENTS</p><h2>Your bookings</h2><p class="muted">Every confirmed appointment at your shop, newest first.</p></div><span id="appointment-count" class="service-count">0 appointments</span></div>
+            <div id="bookings-list" class="bookings-list"></div>
+            <div id="no-bookings" class="no-services">No appointments yet. Once customers book, they appear here with their booking code.</div>
+          </div>
+          <div id="services-section" hidden>
+            <div class="section-heading"><div><p class="eyebrow">SERVICE MENU</p><h2>What do you offer?</h2><p class="muted">Add the appointments customers can book.</p></div><span id="service-count" class="service-count">0 services</span></div>
+            <div class="services-layout"><form id="service-form" class="service-form"><label>Service name<input required name="name" maxlength="160" placeholder="e.g. Signature haircut"></label><div class="two-columns"><label>Duration (mins)<input required name="duration_minutes" type="number" min="5" max="480" value="30"></label><label>Price (₹)<input required name="price" type="number" min="0" value="0"></label></div><button class="button primary" type="submit">Add service <span>+</span></button><p id="service-message" class="form-message" aria-live="polite"></p></form><div><div id="services-list" class="services-list"></div><div id="no-services" class="no-services">Your service menu is empty. Add your first service on the left.</div></div></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <dialog id="password-dialog" class="password-dialog" aria-labelledby="password-title">
+    <form id="password-form" method="dialog">
+      <div class="dialog-heading"><div><p class="eyebrow">ACCOUNT SECURITY</p><h2 id="password-title">Change password</h2><p class="muted">Use at least 8 characters and keep it private.</p></div><button id="close-password" class="close-dialog" value="cancel" aria-label="Close">×</button></div>
+      <label>Current password<input required name="current_password" type="password" autocomplete="current-password"></label>
+      <label>New password<input required name="new_password" type="password" minlength="8" autocomplete="new-password"></label>
+      <label>Confirm new password<input required name="confirm_password" type="password" minlength="8" autocomplete="new-password"></label>
+      <p id="password-message" class="form-message" aria-live="polite"></p>
+      <button class="button primary" type="submit">Update password <span>→</span></button>
+    </form>
+  </dialog>
+  <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <script src="/dashboard/app.js?v=19"></script>
+</body>
+</html>

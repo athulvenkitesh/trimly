@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Trimly — AI assistants for a barbershop booking platform</title>
+<style>
+  @page { size: A4; margin: 15mm 14mm 16mm; }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    margin: 0; color: #1c1a17; background: #ffffff;
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 10.4pt; line-height: 1.55;
+  }
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; color: #14120f; }
+  p { margin: 0 0 8pt; }
+  a { color: #8a5f18; text-decoration: none; }
+  code, .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 8.6pt; }
+  code { background: #f6f2ea; border: 1px solid #e6dfd1; border-radius: 3px; padding: 0.5pt 3pt; }
+  .accent { color: #9a6b1f; }
+  .muted { color: #6b6459; }
+
+  /* cover */
+  .cover { page-break-after: always; padding-top: 18mm; }
+  .mark { display: inline-flex; align-items: center; gap: 7pt; font-weight: 700; letter-spacing: .2px; }
+  .mark span.badge {
+    display: inline-grid; place-items: center; width: 22pt; height: 22pt; border-radius: 6pt;
+    background: #d8b473; color: #241c10; font-family: Georgia, serif; font-size: 13pt;
+  }
+  .eyebrow { font-size: 8pt; letter-spacing: 1.6px; text-transform: uppercase; color: #9a6b1f; font-weight: 700; }
+  .cover h1 { font-size: 33pt; line-height: 1.08; margin: 26mm 0 6mm; letter-spacing: -0.6pt; }
+  .cover .lede { font-size: 12.5pt; color: #4a443a; max-width: 135mm; }
+  .cover .meta { margin-top: 16mm; font-size: 9pt; color: #6b6459; border-top: 1px solid #e2dbcd; padding-top: 5mm; }
+  .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4mm; margin-top: 14mm; }
+  .fact { border: 1px solid #e2dbcd; border-radius: 5pt; padding: 4mm; background: #fbf8f2; }
+  .fact b { display: block; font-family: Georgia, serif; font-size: 17pt; color: #14120f; line-height: 1.1; }
+  .fact span { font-size: 8.4pt; color: #6b6459; }
+
+  /* sections */
+  section { page-break-before: always; }
+  section.flow { page-break-before: auto; }
+  h2 {
+    font-size: 17pt; margin: 0 0 3mm; padding-bottom: 2mm; border-bottom: 1.6px solid #d8b473;
+    break-after: avoid;
+  }
+  h2 .num { color: #b99a63; font-size: 11pt; margin-right: 6pt; letter-spacing: .5px; }
+  h3 { font-size: 11.6pt; margin: 6mm 0 2mm; break-after: avoid; }
+  ul, ol { margin: 0 0 3mm; padding-left: 5mm; }
+  li { margin-bottom: 2.2pt; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
+  .card { border: 1px solid #e2dbcd; border-radius: 6pt; padding: 4mm 4.5mm; background: #fbf8f2; break-inside: avoid; }
+  .card h3 { margin-top: 0; }
+  .note { border-left: 3px solid #d8b473; background: #fbf8f2; padding: 3mm 4mm; margin: 4mm 0; break-inside: avoid; }
+  .note b { color: #14120f; }
+
+  table { width: 100%; border-collapse: collapse; margin: 2mm 0 4mm; font-size: 9.4pt; }
+  th, td { text-align: left; padding: 2mm 2.4mm; border-bottom: 1px solid #e6dfd1; vertical-align: top; }
+  table.tight { font-size: 9.1pt; }
+  th { background: #f4efe4; font-size: 8.4pt; text-transform: uppercase; letter-spacing: .7px; color: #6b6459; }
+  td.k { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 8.8pt; color: #5a4a2c; white-space: nowrap; }
+  tr { break-inside: avoid; }
+
+  pre {
+    background: #f6f2ea; border: 1px solid #e6dfd1; border-radius: 5pt; padding: 3.5mm;
+    font-size: 8.3pt; line-height: 1.45; white-space: pre-wrap; margin: 2mm 0 4mm; break-inside: avoid;
+  }
+
+  /* diagram */
+  .diagram { display: grid; gap: 2.5mm; margin: 3mm 0 5mm; break-inside: avoid; }
+  .row { display: grid; gap: 2.5mm; }
+  .row.c2 { grid-template-columns: 1fr 1fr; }
+  .row.c3 { grid-template-columns: 1fr 1fr 1fr; }
+  .node { border: 1px solid #d9d2c5; border-radius: 5pt; padding: 3mm; background: #fff; }
+  .node b { display: block; font-size: 9.4pt; }
+  .node span { font-size: 8.2pt; color: #6b6459; }
+  .node.hi { background: #fbf3e2; border-color: #d8b473; }
+  .arrow { text-align: center; color: #b99a63; font-size: 9pt; line-height: 1; }
+
+  /* figures */
+  figure { margin: 0 0 6mm; break-inside: avoid; }
+  figure img { width: 100%; display: block; border: 1px solid #d9d2c5; border-radius: 5pt; }
+  figcaption { font-size: 8.6pt; color: #6b6459; margin-top: 2.5mm; }
+  figcaption b { color: #14120f; }
+  .page-fig { page-break-before: always; }
+  .page-fig:first-of-type { page-break-before: auto; }
+</style>
+</head>
+<body>
+
+<!-- ───────────────────────── COVER ───────────────────────── -->
+<div class="cover">
+  <div class="mark"><span class="badge">T</span> Trimly</div>
+  <p class="eyebrow" style="margin-top:14mm">Project report · November 2026</p>
+  <h1>Two AI assistants that answer<br>from the database, not from memory.</h1>
+  <p class="lede">
+    A grounded chat layer for a barbershop booking platform: customers ask for shops,
+    prices and slots; owners ask for today's bookings and revenue. Every sentence is
+    composed from rows retrieved during that request — and every reply carries the rows
+    it was built from.
+  </p>
+  <div class="facts">
+    <div class="fact"><b>2</b><span>assistants, one retrieval layer</span></div>
+    <div class="fact"><b>37</b><span>tests green (13 for the assistants)</span></div>
+    <div class="fact"><b>0</b><span>API keys or model downloads</span></div>
+    <div class="fact"><b>0</b><span>invented prices or slots</span></div>
+  </div>
+  <p class="meta">
+    Stack: FastAPI · Pydantic v2 · SQLAlchemy 2.0 · PostgreSQL 16 · PyJWT · PyTest ·
+    BM25 retrieval · vanilla ES modules<br>
+    Screenshots captured from the running application (seeded demo data, all times UTC).
+  </p>
+</div>
+
+<!-- ───────────────────────── 1 ───────────────────────── -->
+<section class="flow">
+  <h2><span class="num">01</span>What the product does</h2>
+  <p>
+    Trimly is a booking platform for independent barbershops. Owners publish a shop, a service
+    menu, opening hours and a pin on the map; customers find a shop, pick a slot and pay.
+    The assistants sit on top of that same data as a second interface — no new database, no
+    duplicated rules, no separate copy of the truth.
+  </p>
+  <div class="two-col">
+    <div class="card">
+      <h3>Customer assistant</h3>
+      <ul>
+        <li>“Which shops are near me?” — distance-ranked, with prices and ratings</li>
+        <li>“Cheapest haircut” — a real price comparison across the menu</li>
+        <li>Opening hours, reviews, free slots</li>
+        <li>“Book a beard trim tomorrow at 3pm” — books, then offers payment</li>
+        <li>“My bookings”, “cancel 7Q2K9XAB”</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Owner assistant</h3>
+      <ul>
+        <li>“How many bookings do I have today?”</li>
+        <li>“What's today's revenue?” — expected, collected, unpaid</li>
+        <li>“Show me this week / last month”</li>
+        <li>“Which service is selling the most?”</li>
+        <li>“Any walk-ins?”, “What's my cancellation rate?”, “How are my reviews?”</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note">
+    <b>The constraint that shaped the design.</b> A customer acting on a wrong price loses money;
+    an owner acting on a wrong booking count makes a bad staffing decision. So the assistant is
+    not allowed to be “probably right”: it retrieves first, writes second, and shows its sources.
+  </div>
+</section>
+
+<!-- ───────────────────────── 2 ───────────────────────── -->
+<section>
+  <h2><span class="num">02</span>Technology used</h2>
+  <p>
+    Every choice below is the smallest thing that solved the problem at hand — no framework
+    without a reason, no service without a job.
+  </p>
+  <div class="note" style="margin-top:0">
+    <b>Deliberate omission: no LLM in the answer path.</b> The product has to answer with no
+    network, no API budget and no chance of a fabricated ₹300 haircut. Language models would make
+    the prose nicer; they would also make the numbers unverifiable. BM25 plus templates was the
+    cheaper, safer trade — and the retrieval interface is the seam where a model can be added
+    later without touching the rest of the system.
+  </div>
+  <table class="tight">
+    <tr><th style="width:16%">Layer</th><th style="width:26%">Technology</th><th>Why this one</th></tr>
+    <tr><td class="k">API</td><td>FastAPI 0.115 + Starlette</td>
+      <td>Typed models, dependency injection for auth and sessions, OpenAPI docs generated at <code>/docs</code>.</td></tr>
+    <tr><td class="k">Contracts</td><td>Pydantic v2, pydantic-settings</td>
+      <td><code>ChatReply</code> is the single contract for UI and tests; configuration comes from the environment.</td></tr>
+    <tr><td class="k">Persistence</td><td>SQLAlchemy 2.0 (typed models)</td>
+      <td>One ORM for Postgres in production and SQLite in tests; booking rules live as indexes on the table.</td></tr>
+    <tr><td class="k">Database</td><td>PostgreSQL 16 (psycopg 3)</td>
+      <td>Partial unique index on <code>(shop_id, starts_at)</code> where confirmed — double-booking is impossible.</td></tr>
+    <tr><td class="k">Auth</td><td>JWT (PyJWT), Argon2 (pwdlib)</td>
+      <td>Role-based dependencies; anonymous browsing is allowed, a broken session is never silently downgraded.</td></tr>
+    <tr><td class="k">Retrieval</td><td>Hand-written BM25 index</td>
+      <td>No embedding service, no key, no rebuild job: the corpus is rebuilt per request, so it cannot cite a deleted row.</td></tr>
+    <tr><td class="k">Language</td><td>Deterministic intent + entity parsing</td>
+      <td>Days, times and budgets parsed by explicit rules — routing is testable and reproducible, not sampled.</td></tr>
+    <tr><td class="k">Payments</td><td>Provider interface: Razorpay · UPI intent · mock</td>
+      <td>The booking flow never talks to a gateway directly; the implementation comes from configuration.</td></tr>
+    <tr><td class="k">Messaging</td><td>WhatsApp Cloud API</td>
+      <td>A second channel for the same booking services — the web UI is not the only door into the domain.</td></tr>
+    <tr><td class="k">Frontend</td><td>Vanilla ES modules, no build step</td>
+      <td>Two portals shipped as static files; Leaflet 1.9.4 for map views; no bundler to maintain.</td></tr>
+    <tr><td class="k">Testing</td><td>PyTest + FastAPI TestClient</td>
+      <td>Every test drives the real HTTP API — the same interface the browser uses.</td></tr>
+    <tr><td class="k">Ops</td><td>Docker, compose, Alembic, Uvicorn</td>
+      <td>API + Postgres + Redis + Adminer; migrations tracked from day one.</td></tr>
+  </table>
+</section>
+
+<!-- ───────────────────────── 3 ───────────────────────── -->
+<section>
+  <h2><span class="num">03</span>Architecture</h2>
+  <div class="diagram">
+    <div class="row c2">
+      <div class="node"><b>Customer portal</b><span>vanilla JS · chat panel · shop cards</span></div>
+      <div class="node"><b>Owner dashboard</b><span>vanilla JS · “Ask Trimly” view</span></div>
+    </div>
+    <div class="arrow">▼ &nbsp; POST /api/v1/chat/customer &nbsp;·&nbsp; POST /api/v1/chat/owner &nbsp; ▼</div>
+    <div class="node hi"><b>app/api/routes/chat.py</b><span>optional auth for customers · owner-only, shop-scoped for owners · one ChatReply contract</span></div>
+    <div class="arrow">▼</div>
+    <div class="row c2">
+      <div class="node"><b>CustomerChat</b><span>discovery · prices · hours · reviews · slots · booking · cancel</span></div>
+      <div class="node"><b>OwnerChat</b><span>today · week · month · next up · top services · walk-ins · cancellations</span></div>
+    </div>
+    <div class="arrow">▼ &nbsp; retrieve first &nbsp; ▼</div>
+    <div class="row c3">
+      <div class="node"><b>RagIndex (BM25)</b><span>documents built from live rows on every request</span></div>
+      <div class="node"><b>intents</b><span>weighted phrases, day/time/budget parsing</span></div>
+      <div class="node"><b>AvailabilityService</b><span>the only source of bookable times</span></div>
+    </div>
+    <div class="arrow">▼</div>
+    <div class="row c2">
+      <div class="node"><b>BookingService</b><span>create · cancel · unique index is the final guard</span></div>
+      <div class="node"><b>payments</b><span>Razorpay · UPI intent · mock, behind one interface</span></div>
+    </div>
+    <div class="arrow">▼</div>
+    <div class="node"><b>PostgreSQL</b><span>users · shops · services · business hours · bookings · payments · reviews</span></div>
+  </div>
+  <p class="muted" style="font-size:9pt">
+    The chat layer is a consumer of the domain, not a parallel implementation of it: it calls the
+    same availability and booking services as the web dialog and the WhatsApp flow.
+  </p>
+</section>
+
+<!-- ───────────────────────── 4 ───────────────────────── -->
+<section>
+  <h2><span class="num">04</span>How one request works</h2>
+  <ol>
+    <li><b>UI sends a message.</b> <code>sendChat()</code> posts the text plus the shop/service
+      context from the previous reply, optional coordinates, and the bearer token if signed in.</li>
+    <li><b>Auth is optional, not fuzzy.</b> A missing token means anonymous — discovery still works,
+      booking politely refuses. An <i>invalid</i> token is a 401, never a silent sign-out.</li>
+    <li><b>The corpus is rebuilt.</b> <code>customer_documents(db, lat, lon)</code> turns shops,
+      services, hours and reviews into documents; the owner side uses bookings, payments, reviews
+      and the shop profile for the last 30 days.</li>
+    <li><b>Intent is detected.</b> Weighted phrase matching scores the sentence; longer phrases win,
+      so “how many bookings” beats a bare “booking”. Price words override everything else:
+      “cheapest haircut near me” is a price question that mentions distance.</li>
+    <li><b>Entities are resolved.</b> Shop by name → context → single shop. Service by name tokens.
+      <code>parse_day()</code> handles “tomorrow”, weekdays, “12 Oct”, ISO dates;
+      <code>parse_time()</code> handles “5pm”, “17:30”, “noon”, “evening”.</li>
+    <li><b>Slots come from the domain.</b> <code>AvailabilityService</code> intersects business
+      hours, the slot interval, existing confirmed bookings and “future only”. The chat never
+      invents a time.</li>
+    <li><b>Booking goes through the service layer.</b> If the slot was taken between read and
+      write, the unique index raises 409 and the assistant apologises with the next three openings
+      instead of failing.</li>
+    <li><b>The answer is composed from what was retrieved,</b> then returned with its
+      <code>sources</code>, tappable cards, a booking object (if any) and three follow-up options.</li>
+  </ol>
+  <pre>POST /api/v1/chat/customer
+{ "message": "book a beard trim tomorrow at 3pm" }
+
+200 OK
+{ "answer": "✅ Booked! The Corner Chair · Beard Trim\nTue 03 Nov, 15:00 UTC — code MZ1NCTV1
+             ₹150 + ₹10 convenience fee = ₹160.",
+  "intent": "book",
+  "booking": { "id": 12, "code": "MZ1NCTV1", "starts_at": "2026-11-03T15:00:00+00:00",
+               "price_paise": 15000, "convenience_fee_paise": 1000, "total_paise": 16000 },
+  "sources": [ { "doc_id": "service:2", "kind": "service", "label": "Beard Trim at The Corner Chair" } ],
+  "suggestions": [ "Pay with UPI", "Show my bookings", "Book another slot" ] }</pre>
+</section>
+
+<!-- ───────────────────────── 5 ───────────────────────── -->
+<section>
+  <h2><span class="num">05</span>Retrieval: the “R” in RAG</h2>
+  <p>
+    Each document is one row-shaped fact. The index is built in memory for the request, scored
+    with BM25 (the ranking function behind Lucene/Elasticsearch), and thrown away afterwards.
+  </p>
+  <table>
+    <tr><th style="width:22%">Document</th><th style="width:32%">Customer corpus</th><th>Owner corpus</th></tr>
+    <tr><td class="k">shop:&lt;id&gt;</td><td>name, address, pincode, menu summary, rating, hours, distance</td><td>name, address, open/closed, menu</td></tr>
+    <tr><td class="k">service:&lt;id&gt;</td><td>name, price, duration, shop</td><td>—</td></tr>
+    <tr><td class="k">hours:&lt;id&gt;</td><td>one sheet per shop, all seven days</td><td>—</td></tr>
+    <tr><td class="k">booking:&lt;id&gt;</td><td>—</td><td>code, service, price, who, time, status</td></tr>
+    <tr><td class="k">payment:&lt;id&gt;</td><td>—</td><td>amount, method, status</td></tr>
+    <tr><td class="k">review:&lt;id&gt;</td><td>stars, comment</td><td>stars, comment</td></tr>
+  </table>
+  <pre>idf(t)   = ln( 1 + (N - df + 0.5) / (df + 0.5) )
+score(d) = Σ  idf(t) · tf · 2.5 / ( tf + 1.5 · (0.25 + 0.75 · len(d) / avg_len) )</pre>
+  <p>Three details do most of the practical work:</p>
+  <ul>
+    <li><b>Aliases.</b> “haircut”, “hair cut” and “trim” land on the same document; “shops” expands to “barbershop”.</li>
+    <li><b>Stopwords.</b> “near me”, “how much”, “show” carry no signal and are removed before scoring.</li>
+    <li><b>Distance beats relevance when coordinates exist.</b> “haircut near me” lists the closest
+      shop that does haircuts, not the best keyword match.</li>
+  </ul>
+  <div class="note">
+    <b>When to replace it.</b> BM25 is the right shape for tens of documents per shop. Past a few
+    thousand documents (staff, offers, queue length, free-text notes), swap <code>RagIndex</code>
+    for a vector store behind the same <code>search(query, limit, kinds)</code> method — handlers
+    and UI do not change.
+  </div>
+</section>
+
+<!-- ───────────────────────── 6 ───────────────────────── -->
+<section>
+  <h2><span class="num">06</span>Intent routing</h2>
+  <div class="two-col">
+    <div>
+      <h3>Customer</h3>
+      <table>
+        <tr><th>Intent</th><th>Example</th></tr>
+        <tr><td class="k">nearby</td><td>shops near me</td></tr>
+        <tr><td class="k">find_shops</td><td>any fade shops?</td></tr>
+        <tr><td class="k">compare_prices</td><td>cheapest haircut · compare prices</td></tr>
+        <tr><td class="k">services</td><td>how much is a fade?</td></tr>
+        <tr><td class="k">hours</td><td>when are they open?</td></tr>
+        <tr><td class="k">reviews</td><td>is it any good?</td></tr>
+        <tr><td class="k">availability</td><td>free slots tomorrow?</td></tr>
+        <tr><td class="k">book</td><td>book a beard trim 3pm</td></tr>
+        <tr><td class="k">my_bookings / cancel</td><td>my bookings · cancel MZ1NCTV1</td></tr>
+        <tr><td class="k">fallback</td><td>anything else → top-4 BM25 hits, cited</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Owner</h3>
+      <table>
+        <tr><th>Intent</th><th>Example</th></tr>
+        <tr><td class="k">today_bookings</td><td>how many bookings today?</td></tr>
+        <tr><td class="k">today_revenue</td><td>today's collection?</td></tr>
+        <tr><td class="k">period_report</td><td>this week / last month</td></tr>
+        <tr><td class="k">next_appointment</td><td>who is next?</td></tr>
+        <tr><td class="k">top_services</td><td>what sells most?</td></tr>
+        <tr><td class="k">walk_ins</td><td>any walk-ins today?</td></tr>
+        <tr><td class="k">cancellations</td><td>cancel rate this month?</td></tr>
+        <tr><td class="k">reviews</td><td>how are my ratings?</td></tr>
+        <tr><td class="k">hours</td><td>am I open Sunday?</td></tr>
+        <tr><td class="k">customers</td><td>how many regulars?</td></tr>
+      </table>
+    </div>
+  </div>
+  <p>
+    Scores are additive and length-weighted — a two-word phrase is worth 1.75× a one-word
+    keyword — so “how many bookings today” beats “bookings” without a model to call.
+  </p>
+</section>
+
+<!-- ───────────────────────── 7 ───────────────────────── -->
+<section>
+  <h2><span class="num">07</span>Owner numbers, and the one parser behind them</h2>
+  <p>
+    All three report handlers resolve the window through <code>parse_period()</code>, which
+    returns <code>(start, end, label, single_day)</code>. The label is derived from the same
+    timestamps that are counted, so a headline can never describe a different window than the
+    body.
+  </p>
+  <pre>“how many bookings do I have today?”   →  Today (Mon 02 Nov, UTC)
+“what did I collect this week?”        →  This week (02 Nov – 08 Nov, UTC)
+“how many last month?”                 →  Last month (01 Oct – 31 Oct, UTC)</pre>
+  <pre>📊 Today (Mon 02 Nov, UTC) at The Corner Chair:
+• 4 confirmed bookings · 1 walk-in · 1 cancelled
+• Expected: ₹950            ← sum of booked service prices
+• Collected: ₹700           ← COMPLETED payments only
+• Bookings without payment: 1
+
+From: Booking QRU4JHDO · Booking 0ODJ43OX · Booking XH9OGTGK</pre>
+  <div class="note">
+    <b>A bug this design caught.</b> “How many bookings do I have today?” was answered under the
+    headline “This week”: today's numbers, the week's label. It matched on “bookings”, so the
+    handler fell back to its weekly default. It looks fine in a screenshot and is wrong in a
+    Monday review. The fix was one shared period parser plus a test that fails if a “today”
+    question is ever answered under a week label.
+  </div>
+</section>
+
+<!-- ───────────────────────── 8 Screenshots ───────────────────────── -->
+<section>
+  <h2><span class="num">08</span>The product, running</h2>
+  <p class="muted">
+    Captured from the live application at 1280×900 (2× device pixels) against seeded demo data:
+    two shops, five services, six bookings, two reviews. All times UTC.
+  </p>
+
+  <figure class="page-fig">
+    <img src="screenshots/01-customer-nearby.png" alt="Customer portal with the assistant open, listing two nearby shops">
+    <figcaption><b>1 · Customer discovery.</b> “Shops near me” ranks by real distance (0.0 km and
+      3.65 km from the browser's geolocation), prices and ratings are read from the menu, and each
+      shop becomes a tappable card. The source line under the answer names the documents used.</figcaption>
+  </figure>
+
+  <figure class="page-fig">
+    <img src="screenshots/02-customer-comparison.png" alt="Price comparison answer for the cheapest haircut">
+    <figcaption><b>2 · Price comparison.</b> “Cheapest haircut around here” routes to the
+      <code>compare_prices</code> intent, which ranks menu rows by price and explains the saving.
+      A price word overrides the distance wording in the same sentence.</figcaption>
+  </figure>
+
+  <figure class="page-fig">
+    <img src="screenshots/03-customer-booking.png" alt="Booking confirmation inside the chat with a pay action">
+    <figcaption><b>3 · Booking inside the conversation.</b> The reply carries the slot, the code,
+      the price breakdown and a pay action. The booking was created by <code>BookingService</code>
+      — the same call the web dialog makes, so the unique index still guards the slot.</figcaption>
+  </figure>
+
+  <figure class="page-fig">
+    <img src="screenshots/04-owner-overview.png" alt="Owner dashboard overview with today's collection and upcoming bookings">
+    <figcaption><b>4 · Owner dashboard.</b> The same numbers the assistant reports, rendered as
+      cards: today's collection, shop status, next available slot, upcoming bookings.</figcaption>
+  </figure>
+
+  <figure class="page-fig">
+    <img src="screenshots/05-owner-today.png" alt="Owner assistant answering how many bookings today">
+    <figcaption><b>5 · Today's bookings.</b> Counts split into confirmed, walk-ins and cancellations,
+      with money split into expected, collected and unpaid — and the booking codes as citations.</figcaption>
+  </figure>
+
+  <figure class="page-fig">
+    <img src="screenshots/06-owner-revenue.png" alt="Owner assistant answering this week's revenue">
+    <figcaption><b>6 · A different window, same numbers.</b> “This week” returns the same shape with
+      its own label and date span — proof that the label is derived from the counted timestamps.</figcaption>
+  </figure>
+
+  <figure class="page-fig">
+    <img src="screenshots/07-owner-top-services.png" alt="Owner assistant listing top services by bookings">
+    <figcaption><b>7 · Service performance.</b> Bookings and revenue per service over 30 days, with
+      follow-up chips that keep the conversation moving without typing.</figcaption>
+  </figure>
+</section>
+
+<!-- ───────────────────────── 9 ───────────────────────── -->
+<section>
+  <h2><span class="num">09</span>Correctness</h2>
+  <h3>Rules that keep answers honest</h3>
+  <ol>
+    <li><b>Grounding first, wording second.</b> Handlers retrieve rows, then compose the sentence.</li>
+    <li><b>Citations on every reply.</b> <code>ChatReply.sources</code> names the documents used; the UI renders “From: …”.</li>
+    <li><b>Scope by construction.</b> <code>OwnerChat</code> is built for one shop; every query filters on <code>shop_id</code>, so no owner sees another's numbers.</li>
+    <li><b>Auth is honest.</b> Anonymous browsing works; booking asks for sign-in; a bad token is a 401.</li>
+    <li><b>No invented availability.</b> Slots come from <code>AvailabilityService</code>, bookings from <code>BookingService</code>.</li>
+    <li><b>Units are stated.</b> Every time in an answer carries “UTC”.</li>
+  </ol>
+  <h3>Tests</h3>
+  <p>
+    37 tests in total, 13 of them for the assistants, all driving the real HTTP API through
+    <code>TestClient</code>:
+  </p>
+  <ul>
+    <li>shops ranked by distance, prices read from the menu (not from prose)</li>
+    <li>booking from chat appears in <code>/customer/bookings</code></li>
+    <li>cheapest-question ranking, and a named day overriding the default report window</li>
+    <li>owner reports: today's bookings, revenue, next appointment, top service</li>
+    <li>walk-in counted; opening hours reported</li>
+    <li>customers get 403 on <code>/chat/owner</code>; unauthenticated gets 401/403</li>
+  </ul>
+  <pre>$ pytest -q
+37 passed in 13.4s</pre>
+  <div class="note">
+    <b>What the assistant is not allowed to do.</b> Quote a price that is not in
+    <code>services.price_paise</code>; offer a slot that availability would reject; show one shop's
+    bookings to another shop's owner; or claim a weekly figure under a daily heading.
+  </div>
+</section>
+
+<!-- ───────────────────────── 10 ───────────────────────── -->
+<section>
+  <h2><span class="num">10</span>Where the code lives</h2>
+  <pre>app/
+├── api/routes/chat.py              POST /api/v1/chat/customer · /chat/owner
+├── schemas/chat.py                 ChatRequest, ChatReply, ChatCard, ChatBooking, ChatSource
+├── services/chat/                  639 + 266 + 192 + 499 lines
+│   ├── rag.py                      Document, RagIndex (BM25), corpus builders, citations
+│   ├── intents.py                  intents, day/time/budget parsing, content tokens
+│   ├── customer_chat.py            discovery · prices · slots · booking · cancel
+│   └── owner_chat.py               today/week/month · top services · walk-ins · reviews
+├── services/booking_service.py     booking rules (shared with web + WhatsApp)
+├── services/availability_service.py the only source of bookable start times
+├── customer_web/                   customer portal + floating assistant panel
+└── web/                            owner portal + “Ask Trimly” view
+
+tests/test_chat.py                  13 tests · 219 lines</pre>
+  <p>
+    Documentation: <code>docs/chatbot/README.md</code> (structure and naming),
+    <code>docs/chatbot/working-flow.md</code> (full flow, diagrams, transcripts),
+    <code>docs/linkedin-post.md</code> (public write-up).
+  </p>
+</section>
+
+<!-- ───────────────────────── 11 ───────────────────────── -->
+<section>
+  <h2><span class="num">11</span>Limitations and next steps</h2>
+  <table>
+    <tr><th style="width:34%">Limitation</th><th>Next step</th></tr>
+    <tr><td>Payments settle on the mock provider in this build, so chat bookings stay
+      CONFIRMED-but-unpaid until UPI/Razorpay credentials are configured.</td>
+      <td>Wire the gateway keys and register the webhook; the provider interface and the UI
+      states already exist.</td></tr>
+    <tr><td>Retrieval is lexical: phrasing far from the shop/service vocabulary reaches the
+      fallback path.</td>
+      <td>Add query expansion from past unanswered questions; keep BM25 as the default and
+      measure before switching.</td></tr>
+    <tr><td>The conversation has no memory beyond <code>shop_id</code>/<code>service_id</code>
+      carried by the client, so “the second one” cannot be resolved.</td>
+      <td>Store the last few turns per session and resolve pronouns against the previous
+      cards — the reply contract already returns them.</td></tr>
+    <tr><td>Everything is English, and hours are reported in UTC.</td>
+      <td>Per-shop timezone on the profile, and a translation layer over the templates.</td></tr>
+    <tr><td>No per-shop analytics on what customers ask.</td>
+      <td>Log intent + retrieved doc ids; the questions owners cannot answer are product
+      research.</td></tr>
+  </table>
+  <div class="note">
+    <b>The rule worth keeping.</b> Retrieval quality is a correctness feature here, not a tuning
+    knob. When the answer is a price or a time, “sounds right” is not a pass criterion — the
+    source line is.
+  </div>
+</section>
+
+</body>
+</html>

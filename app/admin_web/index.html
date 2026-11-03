@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trimly Control — Administration</title>
+  <link rel="stylesheet" href="/admin/styles.css">
+</head>
+<body>
+  <main id="login-screen" class="login-page">
+    <section class="login-card">
+      <a class="brand" href="/admin/"><span>t</span> trimly <b>CONTROL</b></a>
+      <p class="eyebrow">RESTRICTED ACCESS</p>
+      <h1>Admin console</h1>
+      <p class="muted">Sign in with an administrator account to manage the Trimly marketplace.</p>
+      <form id="login-form">
+        <label>Administrator email<input required name="email" type="email" autocomplete="email" placeholder="admin@trimly.com"></label>
+        <label>Password<input required name="password" type="password" autocomplete="current-password" placeholder="Your password"></label>
+        <button type="submit">Sign in to console <span>→</span></button>
+      </form>
+      <p id="login-message" class="message" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <main id="admin-screen" hidden>
+    <aside class="sidebar">
+      <a class="brand" href="/admin/"><span>t</span> trimly <b>CONTROL</b></a>
+      <p class="section-label">MANAGEMENT</p>
+      <button class="nav active" data-view="shops"><i>⌂</i> Shops</button>
+      <button class="nav" data-view="services"><i>✂</i> Services</button>
+      <div class="admin-profile"><div class="admin-avatar">A</div><div><strong>Administrator</strong><span id="admin-email">—</span></div><button id="open-password" title="Change password" aria-label="Change password">⚿</button><button id="sign-out" title="Sign out" aria-label="Sign out">↗</button></div>
+    </aside>
+    <section class="workspace">
+      <header><div><p class="eyebrow">MARKETPLACE OPERATIONS</p><h1 id="page-title">Shops</h1><p id="page-subtitle" class="muted">Review and manage every barbershop on Trimly.</p></div><button id="refresh" class="refresh">↻ Refresh</button></header>
+      <div class="metrics"><article><span class="metric-icon purple">⌂</span><div><b id="shop-total">0</b><p>Total shops</p></div></article><article><span class="metric-icon green">●</span><div><b id="shop-active">0</b><p>Active shops</p></div></article><article><span class="metric-icon amber">✂</span><div><b id="service-total">0</b><p>Listed services</p></div></article></div>
+      <div id="shops-view" class="view"><div class="table-head"><div><h2>All shops</h2><p id="shop-caption">Loading shops…</p></div><label class="search">⌕ <input id="shop-search" type="search" placeholder="Search a shop or owner"></label></div><div class="table-wrap"><table><thead><tr><th>SHOP</th><th>OWNER</th><th>SERVICES</th><th>STATUS</th><th>JOINED</th><th></th></tr></thead><tbody id="shops-table"></tbody></table><div id="shops-empty" class="empty" hidden>No shops match this search.</div></div></div>
+      <div id="services-view" class="view" hidden><div class="table-head"><div><h2>All services</h2><p id="service-caption">Loading services…</p></div><label class="search">⌕ <input id="service-search" type="search" placeholder="Search a service or shop"></label></div><div class="table-wrap"><table><thead><tr><th>SERVICE</th><th>SHOP</th><th>DURATION</th><th>PRICE</th><th>STATUS</th><th></th></tr></thead><tbody id="services-table"></tbody></table><div id="services-empty" class="empty" hidden>No services match this search.</div></div></div>
+    </section>
+  </main>
+  <dialog id="password-dialog" class="password-dialog" aria-labelledby="password-title">
+    <form id="password-form" method="dialog">
+      <div class="dialog-heading"><div><p class="eyebrow">ACCOUNT SECURITY</p><h2 id="password-title">Change password</h2><p class="muted">Use at least 8 characters and keep it private.</p></div><button id="close-password" class="close-dialog" value="cancel" aria-label="Close">×</button></div>
+      <label>Current password<input required name="current_password" type="password" autocomplete="current-password"></label>
+      <label>New password<input required name="new_password" type="password" minlength="8" autocomplete="new-password"></label>
+      <label>Confirm new password<input required name="confirm_password" type="password" minlength="8" autocomplete="new-password"></label>
+      <p id="password-message" class="message" aria-live="polite"></p>
+      <button class="password-submit" type="submit">Update password <span>→</span></button>
+    </form>
+  </dialog>
+  <div id="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <script src="/admin/app.js"></script>
+</body>
+</html>

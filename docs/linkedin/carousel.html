@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Trimly — LinkedIn carousel</title>
+<style>
+  @page { size: 1080px 1350px; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #12100e; }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color: #f3ede1; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .slide {
+    width: 1080px; height: 1350px; padding: 96px 88px 84px; position: relative;
+    background: radial-gradient(120% 90% at 88% 4%, #241d14 0%, #12100e 58%);
+    display: flex; flex-direction: column; overflow: hidden;
+    page-break-after: always; break-after: page;
+  }
+  .slide:last-child { page-break-after: auto; break-after: auto; }
+  .eyebrow { font-size: 22px; letter-spacing: 3.4px; text-transform: uppercase; color: #c9a262; font-weight: 700; }
+  h1 { font-family: Georgia, "Times New Roman", serif; font-size: 78px; line-height: 1.05; letter-spacing: -1.6px; margin: 34px 0 0; color: #fdf8ef; }
+  h2 { font-family: Georgia, "Times New Roman", serif; font-size: 62px; line-height: 1.1; letter-spacing: -1px; color: #fdf8ef; margin: 0 0 40px; }
+  h3 { font-family: Georgia, "Times New Roman", serif; font-size: 50px; line-height: 1.15; color: #fdf8ef; margin: 0 0 26px; }
+  p { font-size: 34px; line-height: 1.45; color: #ded5c5; }
+  .lede { font-size: 38px; line-height: 1.45; color: #e6ddcc; max-width: 850px; margin-top: 30px; }
+  .foot { position: absolute; left: 88px; right: 88px; bottom: 66px; font-size: 23px; color: #9c9282; display: flex; justify-content: space-between; }
+  .rule { width: 96px; height: 5px; background: #d8b473; border-radius: 3px; margin: 30px 0 0; }
+  .gold { color: #e2bd7e; }
+  .mono { font-family: ui-monospace, Menlo, Consolas, monospace; }
+
+  .card { border: 1px solid #3a332a; background: #1a1712; border-radius: 20px; padding: 34px 38px; }
+  .card h4 { font-size: 28px; color: #c9a262; letter-spacing: 1.6px; text-transform: uppercase; margin-bottom: 16px; }
+  .card b { font-size: 36px; display: block; line-height: 1.25; color: #fdf8ef; margin-bottom: 12px; }
+  .card span { font-size: 27px; line-height: 1.45; color: #b8ae9d; display: block; }
+  .stack { display: grid; gap: 26px; }
+
+  .steps { display: grid; gap: 20px; margin-top: 8px; }
+  .step { display: grid; grid-template-columns: 74px 1fr; align-items: center; gap: 22px;
+          border: 1px solid #3a332a; background: #1a1712; border-radius: 16px; padding: 24px 28px; }
+  .step i { font-style: normal; font-family: Georgia, serif; font-size: 34px; color: #d8b473; }
+  .step b { font-size: 34px; font-weight: 600; color: #f5eee1; }
+  .step span { display: block; font-size: 24px; color: #a99f8e; margin-top: 4px; }
+  .arrow { text-align: center; color: #6d6252; font-size: 26px; }
+
+  ul.checks { list-style: none; display: grid; gap: 26px; }
+  ul.checks li { font-size: 33px; line-height: 1.4; color: #e8dfce; padding-left: 44px; position: relative; }
+  ul.checks li::before { content: "→"; position: absolute; left: 0; color: #d8b473; }
+  ul.checks li b { color: #fdf8ef; }
+
+  figure { margin: 0; display: flex; flex-direction: column; align-items: center; }
+  figure img { border: 1px solid #3a332a; border-radius: 22px; box-shadow: 0 24px 60px rgba(0,0,0,.45); }
+  figure.panel img { width: 620px; }
+  figure.wide img { width: 900px; }
+  figcaption { font-size: 27px; line-height: 1.45; color: #b3a896; margin-top: 30px; text-align: center; max-width: 880px; }
+
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-top: 10px; }
+  .stat { border: 1px solid #3a332a; background: #1a1712; border-radius: 20px; padding: 34px 32px; }
+  .stat b { font-family: Georgia, serif; font-size: 62px; line-height: 1; color: #fdf8ef; display: block; }
+  .stat span { font-size: 25px; color: #a99f8e; display: block; margin-top: 12px; line-height: 1.35; }
+  .quote { border-left: 5px solid #d8b473; padding-left: 30px; font-size: 32px; line-height: 1.45; color: #ded5c5; }
+
+  .cta { margin-top: auto; font-size: 36px; line-height: 1.5; color: #f0e8d8; }
+
+  .hook-card { margin-top: 72px; border: 1px solid #3a332a; background: #1a1712; border-radius: 22px; padding: 34px 36px; }
+  .hook-card .q { align-self: flex-end; justify-self: end; background: #d8b473; color: #241c10; font-weight: 700;
+                  font-size: 27px; padding: 16px 26px; border-radius: 22px 22px 6px 22px; width: fit-content; margin-left: auto; }
+  .hook-card .a { font-size: 33px; color: #f5eee1; margin-top: 26px; }
+  .hook-card .a b { color: #e2bd7e; }
+  .hook-card .src { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 21px; color: #8f8676; margin-top: 18px; }
+  .byline { position: absolute; left: 88px; right: 88px; bottom: 66px; font-size: 24px; color: #8f8676; }
+</style>
+</head>
+<body>
+
+<!-- 1 · hook -->
+<section class="slide">
+  <p class="eyebrow">Build note · Trimly</p>
+  <h1>A booking chatbot that can’t make up a price.</h1>
+  <div class="rule"></div>
+  <p class="lede">Or a free slot. Or today’s revenue.<br>Nine slides on grounding a chat layer in your own database.</p>
+  <div class="hook-card">
+    <p class="q">cheapest haircut around here</p>
+    <p class="a">💰 <b>₹250</b> · 30 min · The Corner Chair · ★4.5</p>
+    <p class="src">From: Haircut at The Corner Chair</p>
+  </div>
+  <div class="foot"><span>FastAPI · SQLAlchemy · BM25</span><span>1 / 9</span></div>
+</section>
+
+<!-- 2 · the trap -->
+<section class="slide">
+  <p class="eyebrow">The trap</p>
+  <h2 style="margin-top:26px">Chat + database<br>= confident guesses.</h2>
+  <div class="stack">
+    <div class="card">
+      <h4>Failure one</h4>
+      <b>“A haircut is ₹200.”</b>
+      <span>The price sounds plausible, comes from nowhere, and the customer finds out at the counter.</span>
+    </div>
+    <div class="card">
+      <h4>Failure two</h4>
+      <b>“How many bookings today?” → a <i>this week</i> headline.</b>
+      <span>The numbers were today’s. The label wasn’t. Looks fine in a screenshot, wrong in a review.</span>
+    </div>
+  </div>
+  <div class="foot"><span>Both are worse than “I don’t know”.</span><span>2 / 9</span></div>
+</section>
+
+<!-- 3 · the rule -->
+<section class="slide">
+  <p class="eyebrow">The rule</p>
+  <h2 style="margin-top:26px">Retrieve first,<br>write second.</h2>
+  <div class="steps">
+    <div class="step"><i>01</i><b>Question</b></div>
+    <div class="step"><i>02</i><b>Intent<span>weighted keywords — “how many bookings” beats “booking”</span></b></div>
+    <div class="step"><i>03</i><b>Retrieve rows<span>BM25 over documents built from the database, this request</span></b></div>
+    <div class="step"><i>04</i><b>Compose the sentence<span>prices from price_paise, slots from the availability engine</span></b></div>
+    <div class="step"><i>05</i><b>Cite the rows<span>every answer carries its sources</span></b></div>
+  </div>
+  <div class="foot"><span>The sentence is never written before the data arrives.</span><span>3 / 9</span></div>
+</section>
+
+<!-- 4 · corpus -->
+<section class="slide">
+  <p class="eyebrow">Retrieval</p>
+  <h2 style="margin-top:26px">What gets retrieved</h2>
+  <ul class="checks">
+    <li><b>1 document per shop</b> — menu, hours, rating, distance</li>
+    <li><b>1 per service</b> — price and duration, straight from the table</li>
+    <li><b>1 per hours sheet, per review</b> — text people actually wrote</li>
+    <li><b>owner side:</b> bookings and payments from the last 30 days</li>
+  </ul>
+  <p class="quote" style="margin-top:44px">BM25 (k1 1.5, b 0.75) · rebuilt on every request · no API key · no index job · works offline</p>
+  <div class="foot"><span>Python standard library + one SQL query per table.</span><span>4 / 9</span></div>
+</section>
+
+<!-- 5 · customer demo -->
+<section class="slide">
+  <p class="eyebrow">Customer side</p>
+  <h3 style="margin-top:22px">Prices, not prose</h3>
+  <figure class="panel">
+    <img src="images/customer-panel.png" alt="Customer chat panel answering cheapest haircut with a price card and a source line">
+    <figcaption>₹250 is <span class="mono gold">services.price_paise</span>. The line under the answer names the document it came from — and the card is tappable to book.</figcaption>
+  </figure>
+  <div class="foot"><span>“cheapest haircut around here”</span><span>5 / 9</span></div>
+</section>
+
+<!-- 6 · owner demo -->
+<section class="slide">
+  <p class="eyebrow">Owner side</p>
+  <h3 style="margin-top:22px">Numbers, with receipts</h3>
+  <figure class="wide">
+    <img src="images/owner-panel.png" alt="Owner assistant showing today's bookings and this week's revenue with booking codes as sources">
+    <figcaption>Counts come from <span class="mono gold">bookings</span>, money from <span class="mono gold">payments</span>. The codes under each answer are the rows that produced it.</figcaption>
+  </figure>
+  <div class="foot"><span>Same retrieval layer. Different corpus.</span><span>6 / 9</span></div>
+</section>
+
+<!-- 7 · booking -->
+<section class="slide">
+  <p class="eyebrow">Booking</p>
+  <h2 style="margin-top:26px">Booking stays boring</h2>
+  <ul class="checks">
+    <li>Slots come from the same availability engine as the web dialog — hours ∩ interval ∩ not booked ∩ future</li>
+    <li>Bookings go through the same <span class="mono gold">BookingService</span> the UI uses</li>
+    <li>The unique index on <span class="mono gold">(shop_id, starts_at)</span> is the final guard</li>
+  </ul>
+  <div class="card" style="margin-top:40px">
+    <b>Slot taken between read and write?</b>
+    <span>The 409 becomes “that slot just went — here are the next three openings.” No lost booking, no lie.</span>
+  </div>
+  <div class="foot"><span>The chat has no private path to the data.</span><span>7 / 9</span></div>
+</section>
+
+<!-- 8 · evidence -->
+<section class="slide">
+  <p class="eyebrow">Evidence</p>
+  <h2 style="margin-top:26px">Why the numbers hold up</h2>
+  <div class="stats">
+    <div class="stat"><b>37</b><span>tests green, 13 of them for the assistants</span></div>
+    <div class="stat"><b>0</b><span>API keys, model downloads or vector DBs</span></div>
+    <div class="stat"><b>100%</b><span>of answers return the rows they were built from</span></div>
+    <div class="stat"><b>1</b><span>bug caught by reading the output, not the pipeline</span></div>
+  </div>
+  <p class="quote" style="margin-top:44px">Retrieval quality is a correctness feature here, not a tuning knob.</p>
+  <div class="foot"><span>Grounding &gt; fluency when the answer is a price.</span><span>8 / 9</span></div>
+</section>
+
+<!-- 9 · cta -->
+<section class="slide">
+  <p class="eyebrow">Your turn</p>
+  <h2 style="margin-top:26px">What would you ask<br>your own shop data first?</h2>
+  <p class="lede">I built this for a barbershop booking platform: two assistants, one retrieval layer, every answer traceable to a row.</p>
+  <div class="cta">
+    <p style="color:#e2bd7e; font-size:34px">The full write-up — architecture, request flow, and the “today vs this week” bug — is in the comments.</p>
+  </div>
+  <div class="byline">Trimly · FastAPI + SQLAlchemy + a hand-written BM25 index · no LLM in the answer path</div>
+</section>
+
+</body>
+</html>
